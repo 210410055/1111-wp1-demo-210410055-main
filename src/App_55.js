@@ -1,80 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import List_55 from './components/List_55'
-import Alert_55 from './components/Alert_55'
+import {BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage_55 from './pages/HomePage_55';
+import AboutPage_55 from './pages/AboutPage_55';
+import ProductsPage_55 from './pages/ProductsPage_55';
+import ErrorPage_55 from './pages/ErrorPage_55';
+import ShareLayout_55 from './pages/ShareLayout_55';
+import ShareProductsLayout_55 from './pages/ShareProductsLayout_55';
+import SingleProductPage_55 from './pages/SingleProductPage_55';
+import Booklistpage_55 from './pages/Booklistpage_55';
 
-const getLocalStorage = () =>{
-  let list = localStorage.getItem('list');
-  if(list) {
-    return JSON.parse(localStorage.getItem('list'));
-  }else{
-    return[];
-  }
+
+function App() {
+  return (
+    <BrowserRouter>
+    <Routes>
+      <Route path='/' element={<ShareLayout_55/>} >
+      <Route index element={<HomePage_55 />} />
+      <Route path='about' element={<AboutPage_55 />} />
+      <Route path='products' element={<ShareProductsLayout_55 />} >
+        <Route index element={<ProductsPage_55 />} />
+        <Route path=":productId"  element={<><SingleProductPage_55 /></>}/>
+      </Route>
+      <Route path='booklist' element={<Booklistpage_55></Booklistpage_55>} />
+      <Route path='*'  element={<ErrorPage_55 />}/>
+      </Route>
+    </Routes>
+    </BrowserRouter>
+  );
 }
 
-const App_55 = () => {
-  const [name,setName] = useState('');
-  const [list,setList] = useState(getLocalStorage());
-  const [alert,setAlert] = useState({
-    show: false,
-    msg: '',
-    type: '',
-});
-
-useEffect(() =>{
-  localStorage.setItem('list', JSON.stringify(list));
-}, [list]);
-
-const showAlert = (show = false, msg = '',type = '') => {
-    setAlert({show,msg,type});
-}
-
-const handleSubmit = (e) =>{
-  e.preventDefault();
-  if(!name){
-    showAlert(true, 'please enter value', 'danger');
-    //
-  }else {
-    showAlert(true, 'value changed', 'success');
-    const newItem ={
-      id: new Date().getTime().toString(),
-      title: name
-    };
-    setList([...list, newItem]);
-    setName('');
-  }
-};
-
-const removeItem = (id) => {
-  showAlert(true,'item removed','danger');
-    setList( list.filter((item)=> item.id !== id));
-};
-
-const clearList = () =>{
-  showAlert(true,'empty list','danger');
-  setList([]);
-};
-
-  return(
-    <>
-    <section className="section-center">
-      <form  className="grocery-from" onSubmit={handleSubmit}>
-        { alert.show && <Alert_55 {...alert} removeAlert={showAlert}/>}
-        <h3>Grocery Bud - 210410155</h3>
-        <div className="form-control">
-          <input type="text" className="grocery" placeholder="e.g. eggs" value={name} onChange={ (e)=>{setName(e.target.value
-            )}} />
-          <button type="submit" className="submit-btn">submit</button>
-        </div>
-      </form>
-      { list.length > 0 &&(
-        <div className="grocery-container">
-          <List_55 items={list} removeItem={removeItem}/>
-          <button className="clear-btn" onClick={clearList}>clear items</button>
-        </div>
-      )}
-      </section>
-      </>
-  )
-}
-
-export default App_55
+export default App;
